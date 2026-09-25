@@ -1,0 +1,103 @@
+
+namespace: streamingapp
+
+services:
+
+  auth:
+    name: auth
+    image: 856862064332.dkr.ecr.us-east-1.amazonaws.com/streaming-auth
+    tag: "v2"
+    replicas: 1
+    port: 3001
+    autoscaling:
+      enabled: true
+      minReplicas: 1
+      maxReplicas: 6
+      targetCPUUtilizationPercentage: 70
+
+  streaming:
+    name: streaming
+    image: 856862064332.dkr.ecr.us-east-1.amazonaws.com/streaming-stream
+    tag: "v1"
+    replicas: 1
+    port: 3002
+    autoscaling:
+      enabled: true
+      minReplicas: 1
+      maxReplicas: 4
+      targetCPUUtilizationPercentage: 70
+
+  admin:
+    name: admin
+    image: 856862064332.dkr.ecr.us-east-1.amazonaws.com/streaming-admin
+    tag: "v1"
+    replicas: 1
+    port: 3003
+    autoscaling:
+      enabled: true
+      minReplicas: 1
+      maxReplicas: 3
+      targetCPUUtilizationPercentage: 70
+
+  chat:
+    name: chat
+    image: 856862064332.dkr.ecr.us-east-1.amazonaws.com/streaming-chat
+    tag: "v1"
+    replicas: 1
+    port: 3004
+    autoscaling:
+      enabled: true
+      minReplicas: 1
+      maxReplicas: 3
+      targetCPUUtilizationPercentage: 70
+
+  frontend:
+    name: frontend
+    image: 856862064332.dkr.ecr.us-east-1.amazonaws.com/streaming-frontend
+    tag: "v1"
+    replicas: 1
+    port: 80
+    autoscaling:
+      enabled: true
+      minReplicas: 1
+      maxReplicas: 3
+      targetCPUUtilizationPercentage: 70
+
+mongo:
+  image: mongo:6
+  replicas: 1
+  port: 27017
+  storage: 5Gi
+  storageClass: gp2
+
+config:
+  mongoHost: mongo
+  mongoPort: "27017"
+  mongoDb: streamingapp
+
+  clientUrls: "http://localhost"
+
+  awsRegion: ap-south-1
+
+  awsS3Bucket: "streamingapp-s3-raj"
+  awsCdnUrl: ""
+
+  streamingPublicUrl: "http://streamingapp.local"
+
+  host: "http://localhost:3000"
+  jwtExpiresIn: "24h"
+
+secret:
+  jwtSecret: ""
+  awsAccessKeyId: ""
+  awsSecretAccessKey: ""
+
+ingress:
+  enabled: true
+  className: alb
+  host: imreading.xyz
+
+serviceAccount:
+  create: true
+  name: streamingapp-s3
+  roleArn: arn:aws:iam::218014315198:role/StreamingAppS3Role
